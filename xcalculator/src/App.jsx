@@ -55,7 +55,7 @@ function App() {
       <h1>React Calculator</h1>
       <input type="text" className="input" value={inputText} />
 
-      <span>{isError ? "Error" : result}</span>
+      <div>{isError ? "Error" : result}</div>
       <div className="btndiv">
         {buttonsText.map((btn, index) => {
           return (
