@@ -27,22 +27,25 @@ function App() {
   const handleBtnClick = (text) => {
     setIsError(false);
 
-    if (text === "=" && inputText === "") {
-      setIsError(true);
-    }
     if (text === "C") {
       setInputText("");
       return;
     }
 
     if (text === "=") {
+      if (inputText.trim() === "") {
+        setIsError(true);
+        setResult("");
+        return;
+      }
+
       try {
         const result = eval(inputText);
         setResult(result);
         setIsError(false);
-      } catch (error) {
-        setIsError(true)
-        return null;
+      } catch {
+        setIsError(true);
+        setResult("");
       }
       return;
     }
