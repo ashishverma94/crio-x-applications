@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
   const [personsData, setPersonsData] = useState([]);
@@ -8,12 +9,18 @@ function App() {
 
   const fetchApiData = async () => {
     try {
-      let persons = await fetch(
-        "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json",
+      const res = await fetch(
+        "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
       );
-      let personsJson = await persons.json();
-      setPersonsData(personsJson);
+
+      if (!res.ok) {
+        throw new Error("API Error");
+      }
+
+      const data = await res.json();
+      setPersonsData(data);
     } catch (error) {
+      alert("Failed to fetch data");
       console.log(error);
     }
   };
@@ -23,17 +30,29 @@ function App() {
   }, []);
 
   // Pagination logic
+  const totalPages = Math.ceil(personsData.length / rowsPerPage);
+
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = personsData.slice(indexOfFirstRow, indexOfLastRow);
 
-  const totalPages = Math.ceil(personsData.length / rowsPerPage);
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
 
   return (
-    <div>
+    <div className="container">
       <h1>Employee Data Table</h1>
 
-      <table border="1" cellPadding="10">
+      <table>
         <thead>
           <tr>
             <th>ID</th>
@@ -42,6 +61,7 @@ function App() {
             <th>Role</th>
           </tr>
         </thead>
+
         <tbody>
           {currentRows.map((person) => (
             <tr key={person.id}>
@@ -54,22 +74,12 @@ function App() {
         </tbody>
       </table>
 
-      <div style={{ marginTop: "20px" }}>
-        <button
-          onClick={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
-        >
-          Prev
-        </button>
+      <div className="pagination">
+        <button onClick={handlePrev}>Previous</button>
 
-        <span style={{ margin: "0 10px" }}>{currentPage}</span>
+        <div className="page-number">{currentPage}</div>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-          }
-        >
-          Next
-        </button>
+        <button onClick={handleNext}>Next</button>
       </div>
     </div>
   );
