@@ -8,12 +8,12 @@ function App() {
   const fetchCountries = async () => {
     try {
       let countriesData = await fetch(
-        "https://xcountries-backend.labs.crio.do/all",
+        "https://countries-search-data-prod-812920491762.asia-south1.run.app/countries",
       );
       let countries = await countriesData.json();
       setCountries(countries);
     } catch (error) {
-      console.error("Error fetching data: ", error);
+      console.error( error);
       console.log(error);
       return null;
     }
@@ -25,7 +25,7 @@ function App() {
 
   useEffect(() => {
     const filtered = countries.filter((country) =>
-      country.name.toLowerCase().includes(searchText.toLowerCase()),
+      country.common.toLowerCase().includes(searchText.toLowerCase()),
     );
     setSearchCountries(filtered);
   }, [searchText, countries]);
@@ -41,9 +41,9 @@ function App() {
       <div className="container">
         {searchCountries.map((country, index) => {
           return (
-            <div className="countryCard" key={country.name + index}>
-              <img src={country.flag} alt={country.abbr} />
-              <span>{country.name}</span>
+            <div className="countryCard" key={country.common + index}>
+              <img src={country.png} alt={country.common} />
+              <span>{country.common}</span>
             </div>
           );
         })}
